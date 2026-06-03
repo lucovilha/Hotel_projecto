@@ -8,7 +8,6 @@
  } 
  
  $erro = ''; 
- $sucesso = ''; 
  
  if ($_SERVER['REQUEST_METHOD'] === 'POST') { 
      $nome  = limpar($_POST['nome'] ?? ''); 
@@ -30,6 +29,7 @@
  
          if (mysqli_stmt_num_rows($stmt) > 0) { 
              $erro = 'Este email já está registado.'; 
+             mysqli_stmt_close($stmt); 
          } else { 
              mysqli_stmt_close($stmt); 
              $hash = password_hash($pass, PASSWORD_DEFAULT); 
@@ -40,24 +40,17 @@
              mysqli_stmt_close($stmt2); 
  
              $_SESSION['user_id']   = $novo_id; 
-            $_SESSION['user_nome'] = $nome; 
-            $_SESSION['user_role'] = 'cliente'; 
+             $_SESSION['user_nome'] = $nome; 
+             $_SESSION['user_role'] = 'cliente'; 
  
-            // Criar perfil de hóspede básico 
-            $stmt3 = mysqli_prepare($conn, 
-                "INSERT INTO hospedes (utilizador_id, nome_completo, doc_tipo, doc_numero) 
-                 VALUES (?, ?, 'Outro', 'por_preencher')"); 
-            mysqli_stmt_bind_param($stmt3, 'is', $novo_id, $nome); 
-            mysqli_stmt_execute($stmt3); 
+             $stmt3 = mysqli_prepare($conn, 
+                 "INSERT INTO hospedes (utilizador_id, nome_completo, doc_tipo, doc_numero) 
+                  VALUES (?, ?, 'Outro', 'por_preencher')"); 
+             mysqli_stmt_bind_param($stmt3, 'is', $novo_id, $nome); 
+             mysqli_stmt_execute($stmt3); 
  
-            redirecionar('../cliente/reservas.php'); 
+             redirecionar('../cliente/reservas.php'); 
          } 
-         // Note: mysqli_stmt_close($stmt) was already called in the else branch if email doesn't exist.
-         // But it should be closed here if it was still open (it is closed above in the "else" but not in the "if").
-         // To be safe and follow the provided logic:
-         if (isset($stmt) && $stmt !== false) {
-             @mysqli_stmt_close($stmt);
-         }
      } 
  } 
  ?> 
@@ -66,19 +59,29 @@
  <head> 
      <meta charset="UTF-8"> 
      <title>Registo</title> 
+     <link rel="stylesheet" href="../includes/style.css"> 
  </head> 
  <body> 
-     <h1>Criar Conta</h1> 
-     <?php if ($erro): ?> 
-         <p style="color:red"><?= h($erro) ?></p> 
-     <?php endif; ?> 
-     <form method="POST"> 
-         <label>Nome <input type="text" name="nome" required></label><br> 
-         <label>Email <input type="email" name="email" required></label><br> 
-         <label>Password <input type="password" name="password" required></label><br> 
-         <label>Confirmar Password <input type="password" name="password2" required></label><br> 
-         <button type="submit">Registar</button> 
-     </form> 
-     <p>Já tens conta? <a href="login.php">Entra aqui</a></p> 
+     <header> 
+         <a href="../index.php">Hotel</a> 
+         <a href="../sobre.php">Sobre Nós</a> 
+     </header> 
+     <main> 
+         <h1>Criar Conta</h1> 
+         <?php if ($erro): ?> 
+             <p class="erro"><?= h($erro) ?></p> 
+         <?php endif; ?> 
+         <form method="POST"> 
+             <label>Nome <input type="text" name="nome" required></label> 
+             <label>Email <input type="email" name="email" required></label> 
+             <label>Password <input type="password" name="password" required></label> 
+             <label>Confirmar Password <input type="password" name="password2" required></label> 
+             <button type="submit">Registar</button> 
+         </form> 
+         <p>Já tens conta? <a href="login.php">Entra aqui</a></p> 
+     </main> 
+     <footer> 
+         <p>&copy; 2026 Hotel. Todos os direitos reservados.</p> 
+     </footer> 
  </body> 
  </html>
