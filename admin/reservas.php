@@ -23,7 +23,8 @@
  <body> 
      <h1>Gestão de Reservas</h1> 
      <a href="index.php">Dashboard</a> | 
-     <a href="../auth/logout.php">Sair</a> 
+    <a href="nova-reserva.php">Nova Reserva</a> | 
+    <a href="../auth/logout.php">Sair</a> 
      <hr> 
      <table border="1"> 
          <tr> 
