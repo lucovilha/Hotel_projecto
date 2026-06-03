@@ -62,8 +62,9 @@
                      $pode_editar = $r['estado'] !== 'cancelada' && $diff > 24; 
                      ?> 
                      <?php if ($pode_editar): ?> 
-                         <a href="cancelar-reserva.php?id=<?= $r['id'] ?>">Cancelar</a> 
-                     <?php endif; ?> 
+                        <a href="editar-reserva.php?id=<?= $r['id'] ?>">Editar</a> | 
+                        <a href="cancelar-reserva.php?id=<?= $r['id'] ?>">Cancelar</a> 
+                    <?php endif; ?> 
                  </td> 
              </tr> 
              <?php endwhile; ?> 
