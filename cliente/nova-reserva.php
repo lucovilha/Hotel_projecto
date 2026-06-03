@@ -6,9 +6,6 @@
  exigir_login('../auth/login.php'); 
  
  $erro = ''; 
- $sucesso = ''; 
- 
- // Buscar tipos de quarto disponíveis 
  $tipos = mysqli_query($conn, "SELECT * FROM tipos_quarto WHERE ativo = 1"); 
  
  if ($_SERVER['REQUEST_METHOD'] === 'POST') { 
@@ -19,7 +16,6 @@
      $pa           = isset($_POST['pequeno_almoco']) ? 1 : 0; 
      $nif          = limpar($_POST['nif'] ?? ''); 
  
-     // Validações básicas 
      if (!$tipo_id || !$data_inicio || !$data_fim) { 
          $erro = 'Preenche todos os campos obrigatórios.'; 
      } elseif ($data_inicio >= $data_fim) { 
@@ -27,7 +23,6 @@
      } elseif ($data_inicio < date('Y-m-d')) { 
          $erro = 'Não podes criar reservas com datas no passado.'; 
      } else { 
-         // Buscar tipo de quarto 
          $stmt = mysqli_prepare($conn, "SELECT * FROM tipos_quarto WHERE id = ? AND ativo = 1"); 
          mysqli_stmt_bind_param($stmt, 'i', $tipo_id); 
          mysqli_stmt_execute($stmt); 
@@ -38,7 +33,6 @@
          } elseif ($num_hospedes > $tipo['capacidade_maxima']) { 
              $erro = 'Número de hóspedes excede a capacidade máxima deste tipo de quarto.'; 
          } else { 
-             // Verificar disponibilidade 
              $stmt2 = mysqli_prepare($conn, 
                  "SELECT COUNT(*) AS ocupados FROM reservas 
                   WHERE tipo_quarto_id = ? 
@@ -48,13 +42,13 @@
              mysqli_stmt_execute($stmt2); 
              $ocupados = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt2))['ocupados']; 
  
-             $total_tipo_res = mysqli_query($conn, "SELECT COUNT(*) AS total FROM quartos WHERE tipo_quarto_id = $tipo_id");
-             $total_tipo = mysqli_fetch_assoc($total_tipo_res)['total']; 
+             $total_tipo = mysqli_fetch_assoc(mysqli_query($conn, 
+                 "SELECT COUNT(*) AS total FROM quartos WHERE tipo_quarto_id = $tipo_id" 
+             ))['total']; 
  
              if ($ocupados >= $total_tipo) { 
                  $erro = 'Não existem quartos disponíveis deste tipo para as datas escolhidas.'; 
              } else { 
-                 // Buscar hospede do utilizador 
                  $uid = user_id(); 
                  $stmt3 = mysqli_prepare($conn, "SELECT id FROM hospedes WHERE utilizador_id = ? LIMIT 1"); 
                  mysqli_stmt_bind_param($stmt3, 'i', $uid); 
@@ -62,7 +56,7 @@
                  $hospede = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt3)); 
  
                  if (!$hospede) { 
-                     $erro = 'Precisas de completar o teu perfil de hóspede antes de reservar.'; 
+                     $erro = 'Precisas de completar o teu perfil antes de reservar.'; 
                  } else { 
                      $noites = calcular_noites($data_inicio, $data_fim); 
                      $total  = calcular_total($noites, $num_hospedes, 
@@ -90,32 +84,41 @@
  <head> 
      <meta charset="UTF-8"> 
      <title>Nova Reserva</title> 
+     <link rel="stylesheet" href="../includes/style.css"> 
  </head> 
  <body> 
-     <h1>Nova Reserva</h1> 
-     <a href="reservas.php">Voltar</a> 
-     <hr> 
-     <?php if ($erro): ?> 
-         <p style="color:red"><?= h($erro) ?></p> 
-     <?php endif; ?> 
-     <form method="POST"> 
-         <label>Tipo de Quarto 
-             <select name="tipo_quarto_id" required> 
-                 <option value="">-- Escolhe --</option> 
-                 <?php while ($t = mysqli_fetch_assoc($tipos)): ?> 
-                     <option value="<?= $t['id'] ?>"> 
-                         <?= h($t['nome']) ?> — €<?= $t['preco_diaria'] ?>/noite 
-                         (max <?= $t['capacidade_maxima'] ?> hóspedes) 
-                     </option> 
-                 <?php endwhile; ?> 
-             </select> 
-         </label><br> 
-         <label>Data de Check-in <input type="date" name="data_inicio" required></label><br> 
-         <label>Data de Check-out <input type="date" name="data_fim" required></label><br> 
-         <label>Número de Hóspedes <input type="number" name="num_hospedes" min="1" value="1" required></label><br> 
-         <label>Pequeno-almoço <input type="checkbox" name="pequeno_almoco"></label><br> 
-         <label>NIF (opcional) <input type="text" name="nif" maxlength="9"></label><br> 
-         <button type="submit">Confirmar Reserva</button> 
-     </form> 
+     <header> 
+         <a href="../index.php">Hotel</a> 
+         <a href="reservas.php">As Minhas Reservas</a> 
+         <a href="../auth/logout.php">Sair</a> 
+     </header> 
+     <main> 
+         <h1>Nova Reserva</h1> 
+         <?php if ($erro): ?> 
+             <p class="erro"><?= h($erro) ?></p> 
+         <?php endif; ?> 
+         <form method="POST"> 
+             <label>Tipo de Quarto 
+                 <select name="tipo_quarto_id" required> 
+                     <option value="">-- Escolhe --</option> 
+                     <?php while ($t = mysqli_fetch_assoc($tipos)): ?> 
+                         <option value="<?= $t['id'] ?>"> 
+                             <?= h($t['nome']) ?> — €<?= $t['preco_diaria'] ?>/noite 
+                             (max <?= $t['capacidade_maxima'] ?> hóspedes) 
+                         </option> 
+                     <?php endwhile; ?> 
+                 </select> 
+             </label> 
+             <label>Data de Check-in <input type="date" name="data_inicio" required></label> 
+             <label>Data de Check-out <input type="date" name="data_fim" required></label> 
+             <label>Número de Hóspedes <input type="number" name="num_hospedes" min="1" value="1" required></label> 
+             <label>Pequeno-almoço <input type="checkbox" name="pequeno_almoco" style="width:auto"></label> 
+             <label>NIF (opcional) <input type="text" name="nif" maxlength="9"></label> 
+             <button type="submit">Confirmar Reserva</button> 
+         </form> 
+     </main> 
+     <footer> 
+         <p>&copy; 2026 Hotel. Todos os direitos reservados.</p> 
+     </footer> 
  </body> 
  </html>
