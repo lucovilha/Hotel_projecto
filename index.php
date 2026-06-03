@@ -10,8 +10,8 @@
  </head> 
  <body> 
      <h1>Bem-vindo ao Hotel</h1> 
-     <p>O melhor hotel para a tua estadia.</p> 
-     <hr> 
+    <a href="sobre.php">Sobre Nós</a> 
+    <hr> 
      <?php if (esta_logado()): ?> 
          <p>Olá, <?= h(user_nome()) ?>!</p> 
          <?php if (e_staff()): ?> 
