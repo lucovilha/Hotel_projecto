@@ -40,10 +40,17 @@
              mysqli_stmt_close($stmt2); 
  
              $_SESSION['user_id']   = $novo_id; 
-             $_SESSION['user_nome'] = $nome; 
-             $_SESSION['user_role'] = 'cliente'; 
+            $_SESSION['user_nome'] = $nome; 
+            $_SESSION['user_role'] = 'cliente'; 
  
-             redirecionar('../cliente/reservas.php'); 
+            // Criar perfil de hóspede básico 
+            $stmt3 = mysqli_prepare($conn, 
+                "INSERT INTO hospedes (utilizador_id, nome_completo, doc_tipo, doc_numero) 
+                 VALUES (?, ?, 'Outro', 'por_preencher')"); 
+            mysqli_stmt_bind_param($stmt3, 'is', $novo_id, $nome); 
+            mysqli_stmt_execute($stmt3); 
+ 
+            redirecionar('../cliente/reservas.php'); 
          } 
          // Note: mysqli_stmt_close($stmt) was already called in the else branch if email doesn't exist.
          // But it should be closed here if it was still open (it is closed above in the "else" but not in the "if").
