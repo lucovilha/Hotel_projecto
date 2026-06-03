@@ -50,17 +50,27 @@
  <head> 
      <meta charset="UTF-8"> 
      <title>Login</title> 
+     <link rel="stylesheet" href="../includes/style.css"> 
  </head> 
  <body> 
-     <h1>Entrar</h1> 
-     <?php if ($erro): ?> 
-         <p style="color:red"><?= h($erro) ?></p> 
-     <?php endif; ?> 
-     <form method="POST"> 
-         <label>Email <input type="email" name="email" required></label><br> 
-         <label>Password <input type="password" name="password" required></label><br> 
-         <button type="submit">Entrar</button> 
-     </form> 
-     <p>Não tens conta? <a href="register.php">Regista-te</a></p> 
+     <header> 
+         <a href="../index.php">Hotel</a> 
+         <a href="../sobre.php">Sobre Nós</a> 
+     </header> 
+     <main> 
+         <h1>Entrar</h1> 
+         <?php if ($erro): ?> 
+             <p class="erro"><?= h($erro) ?></p> 
+         <?php endif; ?> 
+         <form method="POST"> 
+             <label>Email <input type="email" name="email" required></label> 
+             <label>Password <input type="password" name="password" required></label> 
+             <button type="submit">Entrar</button> 
+         </form> 
+         <p>Não tens conta? <a href="register.php">Regista-te</a></p> 
+     </main> 
+     <footer> 
+         <p>&copy; 2026 Hotel. Todos os direitos reservados.</p> 
+     </footer> 
  </body> 
  </html>
