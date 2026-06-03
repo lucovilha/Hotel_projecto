@@ -24,51 +24,60 @@
  <head> 
      <meta charset="UTF-8"> 
      <title>As Minhas Reservas</title> 
+     <link rel="stylesheet" href="../includes/style.css"> 
  </head> 
  <body> 
-     <h1>As Minhas Reservas</h1> 
-     <p>Olá, <?= h(user_nome()) ?></p> 
-     <a href="nova-reserva.php">Fazer Nova Reserva</a> | 
-     <a href="../auth/logout.php">Sair</a> 
- 
-     <hr> 
- 
-     <?php if (mysqli_num_rows($reservas) === 0): ?> 
-         <p>Ainda não tens reservas.</p> 
-     <?php else: ?> 
-         <table border="1"> 
-             <tr> 
-                 <th>Tipo</th> 
-                 <th>Check-in</th> 
-                 <th>Check-out</th> 
-                 <th>Hóspedes</th> 
-                 <th>Estado</th> 
-                 <th>Total</th> 
-                 <th>Ações</th> 
-             </tr> 
-             <?php while ($r = mysqli_fetch_assoc($reservas)): ?> 
-             <tr> 
-                 <td><?= h($r['tipo']) ?></td> 
-                 <td><?= h($r['data_inicio']) ?></td> 
-                 <td><?= h($r['data_fim']) ?></td> 
-                 <td><?= h($r['num_hospedes']) ?></td> 
-                 <td><?= h($r['estado']) ?></td> 
-                 <td>€<?= number_format($r['total_estimado'], 2) ?></td> 
-                 <td> 
-                     <?php 
-                     $inicio = new DateTime($r['data_inicio']); 
-                     $agora = new DateTime(); 
-                     $diff = $agora->diff($inicio)->h + ($agora->diff($inicio)->days * 24); 
-                     $pode_editar = $r['estado'] !== 'cancelada' && $diff > 24; 
-                     ?> 
-                     <?php if ($pode_editar): ?> 
-                        <a href="editar-reserva.php?id=<?= $r['id'] ?>">Editar</a> | 
-                        <a href="cancelar-reserva.php?id=<?= $r['id'] ?>">Cancelar</a> 
-                    <?php endif; ?> 
-                 </td> 
-             </tr> 
-             <?php endwhile; ?> 
-         </table> 
-     <?php endif; ?> 
+     <header> 
+         <a href="../index.php">Hotel</a> 
+         <a href="reservas.php">As Minhas Reservas</a> 
+         <a href="nova-reserva.php">Nova Reserva</a> 
+         <a href="../auth/logout.php">Sair (<?= h(user_nome()) ?>)</a> 
+     </header> 
+     <main> 
+         <h1>As Minhas Reservas</h1> 
+         <p style="color:orange">Pode editar/cancelar até 24 horas antes do check-in.</p> 
+         <?php if (mysqli_num_rows($reservas) === 0): ?> 
+             <p>Ainda não tens reservas. <a href="nova-reserva.php">Faz uma agora</a>.</p> 
+         <?php else: ?> 
+             <table> 
+                 <tr> 
+                     <th>Tipo</th> 
+                     <th>Check-in</th> 
+                     <th>Check-out</th> 
+                     <th>Hóspedes</th> 
+                     <th>Estado</th> 
+                     <th>Total</th> 
+                     <th>Ações</th> 
+                 </tr> 
+                 <?php while ($r = mysqli_fetch_assoc($reservas)): ?> 
+                 <tr> 
+                     <td><?= h($r['tipo']) ?></td> 
+                     <td><?= h($r['data_inicio']) ?></td> 
+                     <td><?= h($r['data_fim']) ?></td> 
+                     <td><?= h($r['num_hospedes']) ?></td> 
+                     <td><?= h($r['estado']) ?></td> 
+                     <td>€<?= number_format($r['total_estimado'], 2) ?></td> 
+                     <td> 
+                         <?php 
+                         $inicio = new DateTime($r['data_inicio']); 
+                         $agora = new DateTime(); 
+                         $horas = ($inicio->getTimestamp() - $agora->getTimestamp()) / 3600; 
+                         $pode_editar = $r['estado'] !== 'cancelada' && $horas > 24; 
+                         ?> 
+                         <?php if ($pode_editar): ?> 
+                             <a href="editar-reserva.php?id=<?= $r['id'] ?>">Editar</a> | 
+                             <a href="cancelar-reserva.php?id=<?= $r['id'] ?>">Cancelar</a> 
+                         <?php else: ?> 
+                             — 
+                         <?php endif; ?> 
+                     </td> 
+                 </tr> 
+                 <?php endwhile; ?> 
+             </table> 
+         <?php endif; ?> 
+     </main> 
+     <footer> 
+         <p>&copy; 2026 Hotel. Todos os direitos reservados.</p> 
+     </footer> 
  </body> 
  </html>
