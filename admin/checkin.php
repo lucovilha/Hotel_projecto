@@ -7,7 +7,6 @@
  
  $id = (int)($_GET['id'] ?? 0); 
  $erro = ''; 
- $sucesso = ''; 
  
  $stmt = mysqli_prepare($conn, 
      "SELECT r.id, r.estado, r.checkin_feito, r.checkout_feito, 
@@ -29,7 +28,6 @@
      $acao = $_POST['acao'] ?? ''; 
  
      if ($acao === 'checkin' && !$reserva['checkin_feito']) { 
-         // Atribuir um quarto livre do tipo certo 
          $stmt2 = mysqli_prepare($conn, 
              "SELECT id FROM quartos 
               WHERE tipo_quarto_id = ? AND estado = 'livre' LIMIT 1"); 
@@ -61,7 +59,6 @@
              mysqli_stmt_bind_param($stmt5, 'sii', $desc, $uid, $id); 
              mysqli_stmt_execute($stmt5); 
  
-             $sucesso = 'Check-in efetuado com sucesso.'; 
              redirecionar('reservas.php'); 
          } 
  
@@ -74,8 +71,8 @@
          mysqli_stmt_execute($stmt6); 
  
          $stmt7 = mysqli_prepare($conn, 
-             "UPDATE quartos SET estado = 'livre' WHERE id = ( 
-                 SELECT quarto_id FROM reservas WHERE id = ?)"); 
+             "UPDATE quartos SET estado = 'livre' WHERE id = 
+              (SELECT quarto_id FROM reservas WHERE id = ?)"); 
          mysqli_stmt_bind_param($stmt7, 'i', $id); 
          mysqli_stmt_execute($stmt7); 
  
@@ -95,32 +92,43 @@
  <head> 
      <meta charset="UTF-8"> 
      <title>Check-in / Check-out</title> 
+     <link rel="stylesheet" href="../includes/style.css"> 
  </head> 
  <body> 
-     <h1>Check-in / Check-out</h1> 
-     <a href="reservas.php">Voltar</a> 
-     <hr> 
-     <?php if ($erro): ?> 
-         <p style="color:red"><?= h($erro) ?></p> 
-     <?php endif; ?> 
-     <p><strong>Hóspede:</strong> <?= h($reserva['nome_completo']) ?></p> 
-     <p><strong>Tipo:</strong> <?= h($reserva['tipo']) ?></p> 
-     <p><strong>Check-in:</strong> <?= h($reserva['data_inicio']) ?></p> 
-     <p><strong>Check-out:</strong> <?= h($reserva['data_fim']) ?></p> 
-     <p><strong>Estado:</strong> <?= h($reserva['estado']) ?></p> 
- 
-     <?php if (!$reserva['checkin_feito']): ?> 
-         <form method="POST"> 
-             <input type="hidden" name="acao" value="checkin"> 
-             <button type="submit">Efetuar Check-in</button> 
-         </form> 
-     <?php elseif (!$reserva['checkout_feito']): ?> 
-         <form method="POST"> 
-             <input type="hidden" name="acao" value="checkout"> 
-             <button type="submit">Efetuar Check-out</button> 
-         </form> 
-     <?php else: ?> 
-         <p>Esta reserva já foi concluída.</p> 
-     <?php endif; ?> 
+     <header> 
+         <a href="index.php">Dashboard</a> 
+         <a href="reservas.php">Reservas</a> 
+         <a href="../auth/logout.php">Sair</a> 
+     </header> 
+     <main> 
+         <h1>Check-in / Check-out</h1> 
+         <?php if ($erro): ?> 
+             <p class="erro"><?= h($erro) ?></p> 
+         <?php endif; ?> 
+         <p><strong>Hóspede:</strong> <?= h($reserva['nome_completo']) ?></p> 
+         <p><strong>Tipo:</strong> <?= h($reserva['tipo']) ?></p> 
+         <p><strong>Check-in:</strong> <?= h($reserva['data_inicio']) ?></p> 
+         <p><strong>Check-out:</strong> <?= h($reserva['data_fim']) ?></p> 
+         <p><strong>Estado:</strong> <?= h($reserva['estado']) ?></p> 
+         <br> 
+         <?php if (!$reserva['checkin_feito']): ?> 
+             <form method="POST"> 
+                 <input type="hidden" name="acao" value="checkin"> 
+                 <button type="submit">Efetuar Check-in</button> 
+             </form> 
+         <?php elseif (!$reserva['checkout_feito']): ?> 
+             <form method="POST"> 
+                 <input type="hidden" name="acao" value="checkout"> 
+                 <button type="submit">Efetuar Check-out</button> 
+             </form> 
+         <?php else: ?> 
+             <p>Esta reserva já foi concluída.</p> 
+         <?php endif; ?> 
+         <br> 
+         <a href="reservas.php">Voltar</a> 
+     </main> 
+     <footer> 
+         <p>&copy; 2026 Hotel. Todos os direitos reservados.</p> 
+     </footer> 
  </body> 
- </html> 
+ </html>
