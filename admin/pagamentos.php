@@ -8,7 +8,6 @@
  $reserva_id = (int)($_GET['reserva_id'] ?? 0); 
  $erro = ''; 
  
- // Buscar reserva 
  $stmt = mysqli_prepare($conn, 
      "SELECT r.id, r.total_estimado, h.nome_completo 
       FROM reservas r 
@@ -22,9 +21,10 @@
      redirecionar('reservas.php'); 
  } 
  
- // Total já pago 
- $pago_res = mysqli_query($conn, "SELECT IFNULL(SUM(montante), 0) AS total FROM pagamentos WHERE reserva_id = $reserva_id");
- $pago = mysqli_fetch_assoc($pago_res)['total']; 
+ $pago = mysqli_fetch_assoc(mysqli_query($conn, 
+     "SELECT IFNULL(SUM(montante), 0) AS total FROM pagamentos 
+      WHERE reserva_id = $reserva_id" 
+ ))['total']; 
  
  $em_falta = $reserva['total_estimado'] - $pago; 
  
@@ -58,7 +58,6 @@
      } 
  } 
  
- // Listar pagamentos 
  $pagamentos = mysqli_query($conn, 
      "SELECT p.montante, p.tipo, p.metodo, p.data, u.nome AS operador 
       FROM pagamentos p 
@@ -71,58 +70,66 @@
  <head> 
      <meta charset="UTF-8"> 
      <title>Pagamentos</title> 
+     <link rel="stylesheet" href="../includes/style.css"> 
  </head> 
  <body> 
-     <h1>Pagamentos — Reserva #<?= $reserva_id ?></h1> 
-     <a href="reservas.php">Voltar</a> 
-     <hr> 
-     <p><strong>Hóspede:</strong> <?= h($reserva['nome_completo']) ?></p> 
-     <p><strong>Total:</strong> €<?= number_format($reserva['total_estimado'], 2) ?></p> 
-     <p><strong>Pago:</strong> €<?= number_format($pago, 2) ?></p> 
-     <p><strong>Em falta:</strong> €<?= number_format($em_falta, 2) ?></p> 
-     <hr> 
-     <h2>Registar Pagamento</h2> 
-     <?php if ($erro): ?> 
-         <p style="color:red"><?= h($erro) ?></p> 
-     <?php endif; ?> 
-     <form method="POST"> 
-         <label>Montante (€) 
-             <input type="number" name="montante" step="0.01" min="0.01" required> 
-         </label><br> 
-         <label>Tipo 
-             <select name="tipo"> 
-                 <option value="parcial">Parcial</option> 
-                 <option value="total">Total</option> 
-             </select> 
-         </label><br> 
-         <label>Método 
-             <select name="metodo"> 
-                 <option value="numerario">Numerário</option> 
-                 <option value="cartao">Cartão</option> 
-                 <option value="transferencia">Transferência</option> 
-             </select> 
-         </label><br> 
-         <button type="submit">Registar</button> 
-     </form> 
-     <hr> 
-     <h2>Histórico</h2> 
-     <table border="1"> 
-         <tr> 
-             <th>Montante</th> 
-             <th>Tipo</th> 
-             <th>Método</th> 
-             <th>Data</th> 
-             <th>Operador</th> 
-         </tr> 
-         <?php while ($p = mysqli_fetch_assoc($pagamentos)): ?> 
-         <tr> 
-             <td>€<?= number_format($p['montante'], 2) ?></td> 
-             <td><?= h($p['tipo']) ?></td> 
-             <td><?= h($p['metodo']) ?></td> 
-             <td><?= h($p['data']) ?></td> 
-             <td><?= h($p['operador']) ?></td> 
-         </tr> 
-         <?php endwhile; ?> 
-     </table> 
+     <header> 
+         <a href="index.php">Dashboard</a> 
+         <a href="reservas.php">Reservas</a> 
+         <a href="../auth/logout.php">Sair</a> 
+     </header> 
+     <main> 
+         <h1>Pagamentos — Reserva #<?= $reserva_id ?></h1> 
+         <p><strong>Hóspede:</strong> <?= h($reserva['nome_completo']) ?></p> 
+         <p><strong>Total:</strong> €<?= number_format($reserva['total_estimado'], 2) ?></p> 
+         <p><strong>Pago:</strong> €<?= number_format($pago, 2) ?></p> 
+         <p><strong>Em falta:</strong> €<?= number_format($em_falta, 2) ?></p> 
+         <hr> 
+         <h2>Registar Pagamento</h2> 
+         <?php if ($erro): ?> 
+             <p class="erro"><?= h($erro) ?></p> 
+         <?php endif; ?> 
+         <form method="POST"> 
+             <label>Montante (€) 
+                 <input type="number" name="montante" step="0.01" min="0.01" required> 
+             </label> 
+             <label>Tipo 
+                 <select name="tipo"> 
+                     <option value="parcial">Parcial</option> 
+                     <option value="total">Total</option> 
+                 </select> 
+             </label> 
+             <label>Método 
+                 <select name="metodo"> 
+                     <option value="numerario">Numerário</option> 
+                     <option value="cartao">Cartão</option> 
+                     <option value="transferencia">Transferência</option> 
+                 </select> 
+             </label> 
+             <button type="submit">Registar</button> 
+         </form> 
+         <h2>Histórico</h2> 
+         <table> 
+             <tr> 
+                 <th>Montante</th> 
+                 <th>Tipo</th> 
+                 <th>Método</th> 
+                 <th>Data</th> 
+                 <th>Operador</th> 
+             </tr> 
+             <?php while ($p = mysqli_fetch_assoc($pagamentos)): ?> 
+             <tr> 
+                 <td>€<?= number_format($p['montante'], 2) ?></td> 
+                 <td><?= h($p['tipo']) ?></td> 
+                 <td><?= h($p['metodo']) ?></td> 
+                 <td><?= h($p['data']) ?></td> 
+                 <td><?= h($p['operador']) ?></td> 
+             </tr> 
+             <?php endwhile; ?> 
+         </table> 
+     </main> 
+     <footer> 
+         <p>&copy; 2026 Hotel. Todos os direitos reservados.</p> 
+     </footer> 
  </body> 
- </html> 
+ </html>
