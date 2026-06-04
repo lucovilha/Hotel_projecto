@@ -28,30 +28,42 @@
  <html lang="pt"> 
  <head> 
      <meta charset="UTF-8"> 
-     <title>Dashboard Admin</title> 
+     <title>Dashboard</title> 
+     <link rel="stylesheet" href="../includes/style.css"> 
  </head> 
  <body> 
-     <h1>Dashboard</h1> 
-     <p>Bem-vindo, <?= h(user_nome()) ?> (<?= h(user_role()) ?>)</p> 
- 
-     <ul> 
-         <li>Quartos ocupados: <?= $ocupados ?>/<?= $total_quartos ?></li> 
-         <li>Reservas ativas: <?= $reservas_ativas ?></li> 
-         <li>Check-ins pendentes hoje: <?= $checkins_hoje ?></li> 
-     </ul> 
- 
-     <nav> 
-         <a href="reservas.php">Reservas</a> | 
-         <a href="checkin.php">Check-in/Check-out</a> | 
-         <a href="pagamentos.php">Pagamentos</a> | 
-         <a href="hospedes.php">Hóspedes</a> | 
-         <?php if (e_gestor()): ?> 
-             <a href="quartos.php">Quartos</a> | 
-             <a href="tipos-quarto.php">Tipos de Quarto</a> | 
-             <a href="relatorios.php">Relatórios</a> | 
-         <?php endif; ?> 
-         <a href="logs.php">Logs</a> | 
+     <header> 
+         <a href="index.php">Dashboard</a> 
+         <a href="reservas.php">Reservas</a> 
+         <a href="checkin.php">Check-in/out</a> 
+         <a href="pagamentos.php">Pagamentos</a> 
+         <a href="hospedes.php">Hóspedes</a> 
+         <?php  if (e_gestor()): ?> 
+             <a href="quartos.php">Quartos</a> 
+             <a href="tipos-quarto.php">Tipos de Quarto</a> 
+             <a href="relatorios.php">Relatórios</a> 
+         <?php  endif; ?> 
+         <a href="logs.php">Logs</a> 
          <a href="../auth/logout.php">Sair</a> 
-     </nav> 
+     </header> 
+     <main> 
+         <h1>Dashboard</h1> 
+         <p>Bem-vindo, <?=  h(user_nome()) ?>  ( <?=  h(user_role()) ?> )</p> 
+         <table> 
+             <tr> 
+                 <th>Quartos Ocupados</th> 
+                 <th>Reservas Ativas</th> 
+                 <th>Check-ins Hoje</th> 
+             </tr> 
+             <tr> 
+                 <td> <?=  $ocupados ?> / <?=  $total_quartos ?> </td> 
+                 <td> <?=  $reservas_ativas ?> </td> 
+                 <td> <?=  $checkins_hoje ?> </td> 
+             </tr> 
+         </table> 
+     </main> 
+     <footer> 
+         <p>&copy; 2026 Hotel. Todos os direitos reservados.</p> 
+     </footer> 
  </body> 
  </html>
