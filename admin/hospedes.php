@@ -5,7 +5,6 @@
  
  exigir_role(['gestor', 'rececionista'], '../auth/login.php'); 
  
- $erro = ''; 
  $sucesso = ''; 
  
  if ($_SERVER['REQUEST_METHOD'] === 'POST') { 
@@ -33,46 +32,60 @@
  <head> 
      <meta charset="UTF-8"> 
      <title>Hóspedes</title> 
+     <link rel="stylesheet" href="../includes/style.css"> 
  </head> 
  <body> 
-     <h1>Gestão de Hóspedes</h1> 
-     <a href="index.php">Dashboard</a> | 
-     <a href="../auth/logout.php">Sair</a> 
-     <hr> 
-     <?php if ($sucesso): ?> 
-         <p style="color:green"><?= h($sucesso) ?></p> 
-     <?php endif; ?> 
-     <table border="1"> 
-         <tr> 
-             <th>Nome</th> 
-             <th>Email</th> 
-             <th>Documento</th> 
-             <th>Nº Doc</th> 
-             <th>NIF</th> 
-             <th>Telefone</th> 
-             <th>Estado</th> 
-             <th>Ações</th> 
-         </tr> 
-         <?php while ($h = mysqli_fetch_assoc($hospedes)): ?> 
-         <tr> 
-             <td><?= h($h['nome_completo']) ?></td> 
-             <td><?= h($h['email']) ?></td> 
-             <td><?= h($h['doc_tipo']) ?></td> 
-             <td><?= h($h['doc_numero']) ?></td> 
-             <td><?= h($h['nif'] ?? '-') ?></td> 
-             <td><?= h($h['telefone'] ?? '-') ?></td> 
-             <td><?= h($h['estado']) ?></td> 
-             <td> 
-                 <?php if ($h['estado'] === 'ativo'): ?> 
-                     <form method="POST" style="display:inline"> 
-                         <input type="hidden" name="acao" value="inativar"> 
-                         <input type="hidden" name="hospede_id" value="<?= $h['id'] ?>"> 
-                         <button type="submit">Inativar</button> 
-                     </form> 
-                 <?php endif; ?> 
-             </td> 
-         </tr> 
-         <?php endwhile; ?> 
-     </table> 
+     <header> 
+         <a href="index.php">Dashboard</a> 
+         <a href="reservas.php">Reservas</a> 
+         <a href="hospedes.php">Hóspedes</a> 
+         <?php if (e_gestor()): ?> 
+             <a href="quartos.php">Quartos</a> 
+             <a href="relatorios.php">Relatórios</a> 
+         <?php endif; ?> 
+         <a href="logs.php">Logs</a> 
+         <a href="../auth/logout.php">Sair</a> 
+     </header> 
+     <main> 
+         <h1>Gestão de Hóspedes</h1> 
+         <?php if ($sucesso): ?> 
+             <p class="sucesso"><?= h($sucesso) ?></p> 
+         <?php endif; ?> 
+         <table> 
+             <tr> 
+                 <th>Nome</th> 
+                 <th>Email</th> 
+                 <th>Documento</th> 
+                 <th>Nº Doc</th> 
+                 <th>NIF</th> 
+                 <th>Telefone</th> 
+                 <th>Estado</th> 
+                 <th>Ações</th> 
+             </tr> 
+             <?php while ($h = mysqli_fetch_assoc($hospedes)): ?> 
+             <tr> 
+                 <td><?= h($h['nome_completo']) ?></td> 
+                 <td><?= h($h['email']) ?></td> 
+                 <td><?= h($h['doc_tipo']) ?></td> 
+                 <td><?= h($h['doc_numero']) ?></td> 
+                 <td><?= h($h['nif'] ?? '-') ?></td> 
+                 <td><?= h($h['telefone'] ?? '-') ?></td> 
+                 <td><?= h($h['estado']) ?></td> 
+                 <td> 
+                     <?php if ($h['estado'] === 'ativo'): ?> 
+                         <form method="POST" style="display:inline"> 
+                             <input type="hidden" name="acao" value="inativar"> 
+                             <input type="hidden" name="hospede_id" value="<?= $h['id'] ?>"> 
+                             <button type="submit">Inativar</button> 
+                         </form> 
+                     <?php endif; ?> 
+                 </td> 
+             </tr> 
+             <?php endwhile; ?> 
+         </table> 
+     </main> 
+     <footer> 
+         <p>&copy; 2026 Hotel. Todos os direitos reservados.</p> 
+     </footer> 
  </body> 
- </html> 
+ </html>
