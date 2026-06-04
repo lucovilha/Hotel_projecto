@@ -28,6 +28,8 @@
      <main> 
          <h1>Bem-vindo ao Hotel</h1> 
          <p>O melhor hotel para a tua estadia.</p> 
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800" 
+             alt="Hotel" style="width:100%; border-radius:8px; margin-top:15px;"> 
      </main> 
      <footer> 
          <p>&copy; 2026 Hotel. Todos os direitos reservados.</p> 
