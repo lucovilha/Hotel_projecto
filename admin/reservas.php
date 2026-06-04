@@ -19,41 +19,55 @@
  <head> 
      <meta charset="UTF-8"> 
      <title>Gestão de Reservas</title> 
+     <link rel="stylesheet" href="../includes/style.css"> 
  </head> 
  <body> 
-     <h1>Gestão de Reservas</h1> 
-     <a href="index.php">Dashboard</a> | 
-    <a href="nova-reserva.php">Nova Reserva</a> | 
-    <a href="../auth/logout.php">Sair</a> 
-     <hr> 
-     <table border="1"> 
-         <tr> 
-             <th>ID</th> 
-             <th>Hóspede</th> 
-             <th>Tipo</th> 
-             <th>Check-in</th> 
-             <th>Check-out</th> 
-             <th>Hóspedes</th> 
-             <th>Estado</th> 
-             <th>Total</th> 
-             <th>Ações</th> 
-         </tr> 
-         <?php while ($r = mysqli_fetch_assoc($reservas)): ?> 
-         <tr> 
-             <td><?= $r['id'] ?></td> 
-             <td><?= h($r['nome_completo']) ?></td> 
-             <td><?= h($r['tipo']) ?></td> 
-             <td><?= h($r['data_inicio']) ?></td> 
-             <td><?= h($r['data_fim']) ?></td> 
-             <td><?= $r['num_hospedes'] ?></td> 
-             <td><?= h($r['estado']) ?></td> 
-             <td>€<?= number_format($r['total_estimado'], 2) ?></td> 
-             <td> 
-                 <a href="checkin.php?id=<?= $r['id'] ?>">Check-in/out</a> | 
-                 <a href="pagamentos.php?reserva_id=<?= $r['id'] ?>">Pagamentos</a> 
-             </td> 
-         </tr> 
-         <?php endwhile; ?> 
-     </table> 
+     <header> 
+         <a href="index.php">Dashboard</a> 
+         <a href="reservas.php">Reservas</a> 
+         <a href="nova-reserva.php">Nova Reserva</a> 
+         <a href="hospedes.php">Hóspedes</a> 
+         <?php if (e_gestor()): ?> 
+             <a href="quartos.php">Quartos</a> 
+             <a href="relatorios.php">Relatórios</a> 
+         <?php endif; ?> 
+         <a href="logs.php">Logs</a> 
+         <a href="../auth/logout.php">Sair</a> 
+     </header> 
+     <main> 
+         <h1>Gestão de Reservas</h1> 
+         <table> 
+             <tr> 
+                 <th>ID</th> 
+                 <th>Hóspede</th> 
+                 <th>Tipo</th> 
+                 <th>Check-in</th> 
+                 <th>Check-out</th> 
+                 <th>Hóspedes</th> 
+                 <th>Estado</th> 
+                 <th>Total</th> 
+                 <th>Ações</th> 
+             </tr> 
+             <?php while ($r = mysqli_fetch_assoc($reservas)): ?> 
+             <tr> 
+                 <td><?= $r['id'] ?></td> 
+                 <td><?= h($r['nome_completo']) ?></td> 
+                 <td><?= h($r['tipo']) ?></td> 
+                 <td><?= h($r['data_inicio']) ?></td> 
+                 <td><?= h($r['data_fim']) ?></td> 
+                 <td><?= $r['num_hospedes'] ?></td> 
+                 <td><?= h($r['estado']) ?></td> 
+                 <td>€<?= number_format($r['total_estimado'], 2) ?></td> 
+                 <td> 
+                     <a href="checkin.php?id=<?= $r['id'] ?>">Check-in/out</a> | 
+                     <a href="pagamentos.php?reserva_id=<?= $r['id'] ?>">Pagamentos</a> 
+                 </td> 
+             </tr> 
+             <?php endwhile; ?> 
+         </table> 
+     </main> 
+     <footer> 
+         <p>&copy; 2026 Hotel. Todos os direitos reservados.</p> 
+     </footer> 
  </body> 
- </html> 
+ </html>
