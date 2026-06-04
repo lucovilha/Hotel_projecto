@@ -45,52 +45,60 @@
  <head> 
      <meta charset="UTF-8"> 
      <title>Quartos</title> 
+     <link rel="stylesheet" href="../includes/style.css"> 
  </head> 
  <body> 
-     <h1>Gestão de Quartos</h1> 
-     <a href="index.php">Dashboard</a> | 
-     <a href="../auth/logout.php">Sair</a> 
-     <hr> 
-     <?php if ($erro): ?> 
-         <p style="color:red"><?= h($erro) ?></p> 
-     <?php endif; ?> 
-     <?php if ($sucesso): ?> 
-         <p style="color:green"><?= h($sucesso) ?></p> 
-     <?php endif; ?> 
- 
-     <h2>Adicionar Quarto</h2> 
-     <form method="POST"> 
-         <input type="hidden" name="acao" value="criar"> 
-         <label>Número <input type="text" name="numero" required></label><br> 
-         <label>Tipo 
-             <select name="tipo_quarto_id" required> 
-                 <option value="">-- Escolhe --</option> 
-                 <?php while ($t = mysqli_fetch_assoc($tipos)): ?> 
-                     <option value="<?= $t['id'] ?>"><?= h($t['nome']) ?></option> 
-                 <?php endwhile; ?> 
-             </select> 
-         </label><br> 
-         <label>Descrição <input type="text" name="descricao"></label><br> 
-         <button type="submit">Adicionar</button> 
-     </form> 
- 
-     <hr> 
-     <h2>Lista de Quartos</h2> 
-     <table border="1"> 
-         <tr> 
-             <th>Número</th> 
-             <th>Tipo</th> 
-             <th>Estado</th> 
-             <th>Descrição</th> 
-         </tr> 
-         <?php while ($q = mysqli_fetch_assoc($quartos)): ?> 
-         <tr> 
-             <td><?= h($q['numero']) ?></td> 
-             <td><?= h($q['tipo']) ?></td> 
-             <td><?= h($q['estado']) ?></td> 
-             <td><?= h($q['descricao'] ?? '-') ?></td> 
-         </tr> 
-         <?php endwhile; ?> 
-     </table> 
+     <header> 
+         <a href="index.php">Dashboard</a> 
+         <a href="reservas.php">Reservas</a> 
+         <a href="quartos.php">Quartos</a> 
+         <a href="tipos-quarto.php">Tipos de Quarto</a> 
+         <a href="relatorios.php">Relatórios</a> 
+         <a href="../auth/logout.php">Sair</a> 
+     </header> 
+     <main> 
+         <h1>Gestão de Quartos</h1> 
+         <?php if ($erro): ?> 
+             <p class="erro"><?= h($erro) ?></p> 
+         <?php endif; ?> 
+         <?php if ($sucesso): ?> 
+             <p class="sucesso"><?= h($sucesso) ?></p> 
+         <?php endif; ?> 
+         <h2>Adicionar Quarto</h2> 
+         <form method="POST"> 
+             <input type="hidden" name="acao" value="criar"> 
+             <label>Número <input type="text" name="numero" required></label> 
+             <label>Tipo 
+                 <select name="tipo_quarto_id" required> 
+                     <option value="">-- Escolhe --</option> 
+                     <?php while ($t = mysqli_fetch_assoc($tipos)): ?> 
+                         <option value="<?= $t['id'] ?>"><?= h($t['nome']) ?></option> 
+                     <?php endwhile; ?> 
+                 </select> 
+             </label> 
+             <label>Descrição <input type="text" name="descricao"></label> 
+             <button type="submit">Adicionar</button> 
+         </form> 
+         <h2>Lista de Quartos</h2> 
+         <table> 
+             <tr> 
+                 <th>Número</th> 
+                 <th>Tipo</th> 
+                 <th>Estado</th> 
+                 <th>Descrição</th> 
+             </tr> 
+             <?php while ($q = mysqli_fetch_assoc($quartos)): ?> 
+             <tr> 
+                 <td><?= h($q['numero']) ?></td> 
+                 <td><?= h($q['tipo']) ?></td> 
+                 <td><?= h($q['estado']) ?></td> 
+                 <td><?= h($q['descricao'] ?? '-') ?></td> 
+             </tr> 
+             <?php endwhile; ?> 
+         </table> 
+     </main> 
+     <footer> 
+         <p>&copy; 2026 Hotel. Todos os direitos reservados.</p> 
+     </footer> 
  </body> 
- </html> 
+ </html>
