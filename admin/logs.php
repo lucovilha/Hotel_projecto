@@ -17,29 +17,39 @@
  <head> 
      <meta charset="UTF-8"> 
      <title>Logs de Auditoria</title> 
+     <link rel="stylesheet" href="../includes/style.css"> 
  </head> 
  <body> 
-     <h1>Logs de Auditoria</h1> 
-     <a href="index.php">Dashboard</a> | 
-     <a href="../auth/logout.php">Sair</a> 
-     <hr> 
-     <table border="1"> 
-         <tr> 
-             <th>ID</th> 
-             <th>Ação</th> 
-             <th>Descrição</th> 
-             <th>Operador</th> 
-             <th>Data</th> 
-         </tr> 
-         <?php while ($l = mysqli_fetch_assoc($logs)): ?> 
-         <tr> 
-             <td><?= $l['id'] ?></td> 
-             <td><?= h($l['acao']) ?></td> 
-             <td><?= h($l['descricao']) ?></td> 
-             <td><?= h($l['operador'] ?? 'Sistema') ?></td> 
-             <td><?= h($l['criado_em']) ?></td> 
-         </tr> 
-         <?php endwhile; ?> 
-     </table> 
+     <header> 
+         <a href="index.php">Dashboard</a> 
+         <a href="reservas.php">Reservas</a> 
+         <a href="relatorios.php">Relatórios</a> 
+         <a href="logs.php">Logs</a> 
+         <a href="../auth/logout.php">Sair</a> 
+     </header> 
+     <main> 
+         <h1>Logs de Auditoria</h1> 
+         <table> 
+             <tr> 
+                 <th>ID</th> 
+                 <th>Ação</th> 
+                 <th>Descrição</th> 
+                 <th>Operador</th> 
+                 <th>Data</th> 
+             </tr> 
+             <?php while ($l = mysqli_fetch_assoc($logs)): ?> 
+             <tr> 
+                 <td><?= $l['id'] ?></td> 
+                 <td><?= h($l['acao']) ?></td> 
+                 <td><?= h($l['descricao']) ?></td> 
+                 <td><?= h($l['operador'] ?? 'Sistema') ?></td> 
+                 <td><?= h($l['criado_em']) ?></td> 
+             </tr> 
+             <?php endwhile; ?> 
+         </table> 
+     </main> 
+     <footer> 
+         <p>&copy; 2026 Hotel. Todos os direitos reservados.</p> 
+     </footer> 
  </body> 
- </html> 
+ </html>
